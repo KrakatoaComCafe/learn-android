@@ -1,6 +1,9 @@
 package com.krakatoa.app.presentation.addtext
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.krakatoa.app.data.remote.TextApiService
+import com.krakatoa.app.data.remote.TextRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -15,15 +18,23 @@ class AddTextViewModel: ViewModel() {
     }
 
     fun sendText() {
+        val currentText = _uiState.value.text
+        if (currentText.isBlank()) return
+
         _uiState.update { it.copy(isSending = true, successMessage = null, errorMessage = null) }
 
-        kotlinx.coroutines.GlobalScope.launch {
-            kotlinx.coroutines.delay(1000)
-            _uiState.update {
-                it.copy(
+        viewModelScope.launch {
+            try {
+                TextApiService.api.sendText(TextRequest(text = currentText))
+                _uiState.value = _uiState.value.copy(
                     isSending = false,
                     successMessage = "Text has been sent with success!",
                     text = ""
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isSending = false,
+                    errorMessage = "Error sending text: ${e.message}"
                 )
             }
         }
