@@ -3,7 +3,7 @@ package com.krakatoa.app.presentation.listtext
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.krakatoa.app.domain.repository.TextRepository
+import com.krakatoa.app.domain.usecase.GetTextUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,28 +12,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ListTextViewModel @Inject constructor(
-    private val textRepository: TextRepository
+    private val getTextUseCase: GetTextUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ListTextUiState())
+    private val _uiState = MutableStateFlow<ListTextUiState>(ListTextUiState.Idle)
     val uiState: StateFlow<ListTextUiState> = _uiState
 
     fun loadTexts() {
-        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+        _uiState.value = ListTextUiState.Loading
 
         viewModelScope.launch {
             try {
-                val texts = textRepository.getTexts()
-                Log.d("API", "GET returned: $texts")
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    texts = texts
-                )
+                val texts = getTextUseCase()
+                _uiState.value = ListTextUiState.Success(texts)
             } catch (e: Exception) {
-                Log.d("API", "Failed ${e.message}")
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Error to search for texts: ${e.message}"
-                )
+                _uiState.value = ListTextUiState.Error("Error loading texts: [${e.message}]")
             }
         }
     }

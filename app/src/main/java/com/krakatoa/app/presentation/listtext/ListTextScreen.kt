@@ -35,18 +35,20 @@ fun ListTextScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            when {
-                state.isLoading -> {
+            when(state) {
+                is ListTextUiState.Loading -> {
                     CircularProgressIndicator()
                 }
 
-                state.errorMessage != null -> {
-                    Text("Error: ${state.errorMessage}")
+                is ListTextUiState.Error -> {
+                    val errorMessage = (state as ListTextUiState.Error).message
+                    Text("Error: $errorMessage")
                 }
 
-                else -> {
+                is ListTextUiState.Success -> {
+                    val texts = (state as ListTextUiState.Success).texts
                     LazyColumn {
-                        items(state.texts) { textResponse: TextResponse ->
+                        items(texts) { textResponse: TextResponse ->
                             Text(
                                 text = textResponse.text,
                                 style = MaterialTheme.typography.bodyLarge,
@@ -54,6 +56,10 @@ fun ListTextScreen(
                             )
                         }
                     }
+                }
+
+                ListTextUiState.Idle -> {
+                    Text("Waiting action...")
                 }
             }
         }

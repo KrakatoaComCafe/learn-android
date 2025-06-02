@@ -1,8 +1,8 @@
 package com.krakatoa.app.presentation.addtext
 
-data class AddTextUiState(
-    val text: String = "",
-    val isSending: Boolean = false,
-    val successMessage: String? = null,
-    val errorMessage: String? = null
-)
+sealed class AddTextUiState {
+    object Idle: AddTextUiState()
+    object Loading: AddTextUiState()
+    data class Success(val text: String): AddTextUiState()
+    data class Error(val message: String): AddTextUiState()
+}
