@@ -2,14 +2,20 @@ package com.krakatoa.app.presentation.addtext
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.krakatoa.app.data.remote.TextApiService
-import com.krakatoa.app.data.remote.TextRequest
+import com.krakatoa.app.data.remote.model.TextRequest
+import com.krakatoa.app.domain.repository.TextRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddTextViewModel: ViewModel() {
+
+@HiltViewModel
+class AddTextViewModel @Inject constructor(
+    private val textRepository: TextRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(AddTextUiState())
     val uiState: StateFlow<AddTextUiState> = _uiState
 
@@ -25,7 +31,7 @@ class AddTextViewModel: ViewModel() {
 
         viewModelScope.launch {
             try {
-                TextApiService.api.sendText(TextRequest(text = currentText))
+                textRepository.sendText(TextRequest(text = currentText))
                 _uiState.value = _uiState.value.copy(
                     isSending = false,
                     successMessage = "Text has been sent with success!",

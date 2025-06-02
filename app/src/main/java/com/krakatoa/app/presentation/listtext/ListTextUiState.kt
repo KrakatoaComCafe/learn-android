@@ -1,6 +1,6 @@
 package com.krakatoa.app.presentation.listtext
 
-import com.krakatoa.app.data.remote.TextResponse
+import com.krakatoa.app.data.remote.model.TextResponse
 
 data class ListTextUiState(
     val isLoading: Boolean = false,

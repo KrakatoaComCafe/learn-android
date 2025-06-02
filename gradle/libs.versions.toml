@@ -1,6 +1,5 @@
 [versions]
 agp = "8.10.1"
-composeBomVersion = "2025.05.01"
 kotlin = "2.0.21"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -11,10 +10,12 @@ activityCompose = "1.8.0"
 composeBom = "2024.09.00"
 navigation = "2.7.7"
 retrofit = "2.9.0"
-moshi = "1.15.0"
+moshi = "1.15.1"
+hilt = "2.50"
+hilt-navigation = "1.2.0"
+ksp = "2.0.21-1.0.25"
 
 [libraries]
-androidx-compose-bom-v20250501 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -35,9 +36,16 @@ androidx-retrofit-moshi = { group = "com.squareup.retrofit2", name = "converter-
 androidx-converter-moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
 androidx-converter-moshi-gen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi" }
 androidx-converter-moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
+androidx-hilt-grade-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
+androidx-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+androidx-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+androidx-hilt-navigation-composer = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
+kotlin-ksp-no-version = { id = "com.google.devtools.ksp" }
+hilt = { id = "com.google.dagger.hilt.android" }
 

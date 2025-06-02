@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.ksp.no.version)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -58,6 +60,9 @@ dependencies {
     implementation(libs.androidx.converter.moshi)
     implementation(libs.androidx.converter.moshi.gen)
     implementation(libs.androidx.converter.moshi.kotlin)
+    implementation(libs.androidx.hilt)
+    ksp(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.composer)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
