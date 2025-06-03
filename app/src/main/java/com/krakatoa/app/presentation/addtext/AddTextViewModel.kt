@@ -2,12 +2,12 @@ package com.krakatoa.app.presentation.addtext
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.krakatoa.app.data.remote.model.TextRequest
 import com.krakatoa.app.domain.usecase.SendTextUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,6 +18,8 @@ class AddTextViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<AddTextUiState>(AddTextUiState.Idle)
     val uiState: StateFlow<AddTextUiState> = _uiState
+    private val _uiEvent = Channel<AddTextUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     fun addText(text: String) {
         _uiState.value = AddTextUiState.Loading
@@ -25,8 +27,10 @@ class AddTextViewModel @Inject constructor(
             try {
                 sendTextUseCase(text)
                 _uiState.value = AddTextUiState.Success(text)
+                _uiEvent.send(AddTextUiEvent.ShowSnackBar("Text added successfully!"))
+                _uiEvent.send(AddTextUiEvent.NavigationBack)
             } catch (e: Exception) {
-                _uiState.value = AddTextUiState.Error("Error to send text: [${e.message}]")
+                _uiEvent.send(AddTextUiEvent.ShowSnackBar("Error sending message: [${e.message}]"))
             }
         }
     }

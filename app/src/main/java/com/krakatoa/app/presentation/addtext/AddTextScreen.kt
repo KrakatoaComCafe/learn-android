@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,42 +33,57 @@ fun AddTextScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     var text by remember { mutableStateOf("") }
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
-            label = { Text("Type text here") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = { viewModel.addText(text) }) {
-            Text("Add text")
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect {event ->
+            when(event) {
+                is AddTextUiEvent.ShowSnackBar -> {
+                    snackBarHostState.showSnackbar(event.message)
+                }
+                is AddTextUiEvent.NavigationBack -> {
+                    navController.popBackStack()
+                }
+            }
         }
+    }
 
-        Spacer(modifier = Modifier.height(16.dp))
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
+        ) {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                label = { Text("Type text here") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        when (state) {
-            is AddTextUiState.Loading -> CircularProgressIndicator()
+            Spacer(modifier = Modifier.height(16.dp))
 
-            is AddTextUiState.Success -> {
-                val textToSent = (state as AddTextUiState.Success).text
-                Text("Text sent successfully: [${textToSent}]")
-                navController.popBackStack()
+            Button(onClick = { viewModel.addText(text) }) {
+                Text("Add text")
             }
 
-            is AddTextUiState.Error -> {
-                val message = (state as AddTextUiState.Error).message
-                Text("Error: [$message]", color = Color.Red)
-            }
+            Spacer(modifier = Modifier.height(16.dp))
 
-            AddTextUiState.Idle -> {}
+            when (state) {
+                is AddTextUiState.Loading -> CircularProgressIndicator()
+
+                is AddTextUiState.Success -> {}
+
+                is AddTextUiState.Error -> {
+                    val message = (state as AddTextUiState.Error).message
+                    Text("Error: [$message]", color = Color.Red)
+                }
+
+                AddTextUiState.Idle -> {}
+            }
         }
     }
 }
