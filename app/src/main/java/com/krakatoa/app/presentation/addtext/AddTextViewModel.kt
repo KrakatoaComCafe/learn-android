@@ -22,8 +22,8 @@ class AddTextViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun addText(text: String) {
-        _uiState.value = AddTextUiState.Loading
         viewModelScope.launch {
+        _uiState.value = AddTextUiState.Loading
             try {
                 sendTextUseCase(text)
                 _uiState.value = AddTextUiState.Success(text)
