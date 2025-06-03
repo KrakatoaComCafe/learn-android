@@ -8,6 +8,6 @@ plugins {
 
 buildscript {
     dependencies {
-        classpath(libs.androidx.hilt.grade.plugin)
+        classpath(libs.google.hilt.grade.plugin)
     }
 }
