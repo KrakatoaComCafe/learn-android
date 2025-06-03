@@ -56,6 +56,7 @@ fun AddTextScreen(
             is AddTextUiState.Success -> {
                 val textToSent = (state as AddTextUiState.Success).text
                 Text("Text sent successfully: [${textToSent}]")
+                navController.popBackStack()
             }
 
             is AddTextUiState.Error -> {

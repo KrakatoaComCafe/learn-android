@@ -1,6 +1,5 @@
 package com.krakatoa.app.presentation.listtext
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.krakatoa.app.domain.usecase.GetTextUseCase
